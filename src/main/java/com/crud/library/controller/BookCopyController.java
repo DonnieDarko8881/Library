@@ -23,17 +23,17 @@ public class BookCopyController {
     }
 
     @GetMapping(value = "/copies/howManyAccessToBorrow/{bookId}")
-    public Integer getAccessCopyOfTheBook(@PathVariable long bookId) {
+    public Integer getHowManyAccessToBorrow(@PathVariable long bookId) {
         return copyService.howManyAccessToBorrow(bookId);
     }
 
     @PostMapping(value = "/copies/books/{bookId}")
-    public void addCopyOfBook(@PathVariable Long bookId) {
+    public void addBookCopy(@PathVariable Long bookId) {
         copyService.addBookCopy(bookId);
     }
 
     @DeleteMapping(value = "/copies/{bookCopyId}")
-    public void deleteCopyOfBook(@PathVariable Long bookCopyId) {
+    public void deleteBookCopy(@PathVariable Long bookCopyId) {
         copyService.deleteBookById(bookCopyId);
     }
 
