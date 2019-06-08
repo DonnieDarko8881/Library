@@ -10,13 +10,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 public class BorrowedBookDto {
-    private long id;
-    private java.lang.Long copyId;
+    private Long id;
+    private Long copyId;
     private Long readerId;
     private LocalDate borrowDate;
     private LocalDate returnDate;
 
-    public BorrowedBookDto(long id, java.lang.Long copyId, Long readerId, LocalDate borrowDate) {
+    public BorrowedBookDto(Long id, Long copyId, Long readerId, LocalDate borrowDate) {
         this.id = id;
         this.copyId = copyId;
         this.readerId = readerId;

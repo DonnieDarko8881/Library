@@ -1,6 +1,5 @@
 package com.crud.library.controller;
 
-
 import com.crud.library.domain.BookDto;
 import com.crud.library.mapper.BookMapper;
 import com.crud.library.service.BookService;
@@ -12,33 +11,30 @@ import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/v1/library/book")
+@RequestMapping("/v1/library")
 public class BookController {
-    private BookMapper bookMapper;
-    private BookService bookService;
+    private final BookMapper bookMapper;
+    private final BookService bookService;
 
     @Autowired
-    public BookController(BookMapper bookMapper, BookService bookService) {
+    public BookController(BookMapper bookMapper,
+                          BookService bookService) {
         this.bookMapper = bookMapper;
         this.bookService = bookService;
     }
 
-    @GetMapping(value = "getBooks")
+    @GetMapping(value = "/books")
     public List<BookDto> getBooks() {
         return bookMapper.mapToBookDtoList(bookService.getBooks());
     }
 
-    @GetMapping(value = "getBook")
-    public BookDto getBooks(@RequestParam("bookId") Long bookId) {
-        return bookMapper.mapToBookDto(bookService.findBookById(bookId));
+    @GetMapping(value = "/books/{bookId}")
+    public BookDto getBook(@PathVariable Long bookId) {
+        return bookMapper.mapToBookDto(bookService.findById(bookId));
     }
 
-    @PostMapping(value = "addBook", consumes = APPLICATION_JSON_VALUE)
-    public void addBook(@RequestBody BookDto bookDto ) {
-        bookService.saveBook(bookMapper.mapToBook(bookDto));
+    @PostMapping(value = "/books", consumes = APPLICATION_JSON_VALUE)
+    public void addBook(@RequestBody BookDto bookDto) {
+        bookService.save(bookMapper.mapToBook(bookDto));
     }
-
-
-
-
 }

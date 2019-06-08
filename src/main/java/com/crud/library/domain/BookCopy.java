@@ -8,17 +8,27 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+@NamedNativeQuery(
+        name = "BookCopy.retrieveAmountAccessBookToBorrow",
+
+        query = "SELECT * FROM book_copy " +
+                "WHERE book_id = :bookId " +
+                "AND is_borrowed = false " +
+                "AND status = 'GOOD'",
+        resultClass = BookCopy.class
+)
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Entity(name = "copy_of_book")
-public class CopyOfTheBook {
+@Entity(name = "book_copy")
+public class BookCopy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @NotNull
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "book_id")
@@ -30,9 +40,14 @@ public class CopyOfTheBook {
     @Column(name = "is_borrowed")
     private Boolean borrowed;
 
-    public CopyOfTheBook(Book book, String status) {
+    public BookCopy(Book book, String status) {
         this.book = book;
         this.status = status;
         this.borrowed = false;
     }
+
+    public Boolean isBorrowed() {
+        return borrowed;
+    }
 }
+

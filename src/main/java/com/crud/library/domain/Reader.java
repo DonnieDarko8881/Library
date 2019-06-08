@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,12 +27,12 @@ public class Reader {
     private String lastName;
 
     @Column(name = "date_of_register")
-    private LocalDate dateOfRegister;
+    private LocalDate registerDate;
 
     public Reader(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.dateOfRegister = LocalDate.now();
+        this.registerDate = LocalDate.now();
     }
 
 

@@ -5,33 +5,30 @@ import com.crud.library.domain.Reader;
 import com.crud.library.repository.ReaderRepository;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 public class ReaderService {
 
-    private ReaderRepository readerRepository;
+    private final ReaderRepository readerRepository;
 
     public ReaderService(ReaderRepository readerRepository) {
         this.readerRepository = readerRepository;
     }
 
-    public void saveReader(Reader reader) {
+    public void save(Reader reader) {
         readerRepository.save(reader);
     }
 
-    public void deleteReaderById(Long readerId) {
+    public void deleteById(Long readerId) {
         readerRepository.deleteById(readerId);
     }
 
-    public Reader findReaderById(Long readerId) throws ReaderNotFoundException {
+    public Reader findById(Long readerId) throws ReaderNotFoundException {
         return readerRepository.findById(readerId).orElseThrow(ReaderNotFoundException::new);
     }
 
-    public List<Reader> getReaders() {
+    public List<Reader> findAll() {
         return readerRepository.findAll();
     }
-
 }

@@ -23,7 +23,7 @@ public class BorrowedBook {
 
     @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "copy_of_book_id")
-    private CopyOfTheBook copyOfTheBook;
+    private BookCopy copyOfTheBook;
 
     @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "reader_id")
@@ -35,7 +35,7 @@ public class BorrowedBook {
     @Column(name = "return_date")
     private LocalDate returnDate;
 
-    public BorrowedBook(CopyOfTheBook copyOfTheBook, Reader reader, LocalDate borrowDate) {
+    public BorrowedBook(BookCopy copyOfTheBook, Reader reader, LocalDate borrowDate) {
         this.copyOfTheBook = copyOfTheBook;
         this.reader = reader;
         this.borrowDate = borrowDate;

@@ -2,20 +2,17 @@ package com.crud.library.service;
 
 import com.crud.library.Exception.CopyNotFoundException;
 import com.crud.library.domain.Book;
-import com.crud.library.domain.CopyOfTheBook;
+import com.crud.library.domain.BookCopy;
 import com.crud.library.domain.Status;
 import com.crud.library.repository.CopyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-
 @Service
-@Transactional
 public class CopyService {
 
-    private CopyRepository copyRepository;
-    private BookService bookService;
+    private final CopyRepository copyRepository;
+    private final BookService bookService;
 
     @Autowired
     public CopyService(CopyRepository copyRepository, BookService bookService) {
@@ -23,36 +20,33 @@ public class CopyService {
         this.bookService = bookService;
     }
 
-    public void saveCopyOfTheBook(CopyOfTheBook copyOfTheBook) {
+    public void save(BookCopy copyOfTheBook) {
         copyRepository.save(copyOfTheBook);
     }
 
-    public void deleteCopyOfTheBookById(Long copyOfTheBookId) {
+    public void deleteBookById(Long copyOfTheBookId) {
         copyRepository.deleteById(copyOfTheBookId);
     }
 
-    public CopyOfTheBook findCopyOfTheBookById(Long copyOfTheBookId) {
+    public BookCopy findById(Long copyOfTheBookId) {
         return copyRepository.findById(copyOfTheBookId).orElseThrow(CopyNotFoundException::new);
     }
 
     public Integer howManyAccessToBorrow(Long bookId) {
-        return (int) bookService.findBookById(bookId).getCopiesBookInLibrary().stream()
-                .filter(copy -> !copy.getBorrowed())
-                .filter(copy -> copy.getStatus().equals(Status.GOOD.toString()))
-                .count();
+        return copyRepository.retrieveAmountAccessBookToBorrow(bookId).size();
     }
 
-    public void addCopyOfTheBook(Long bookId) {
-        CopyOfTheBook copy = new CopyOfTheBook(bookService.findBookById(bookId), Status.GOOD.toString());
-        Book book = bookService.findBookById(bookId);
+    public void addBookCopy(Long bookId) {
+        Book book = bookService.findById(bookId);
+        BookCopy copy = new BookCopy(book, Status.GOOD.toString());
         copy.setBook(book);
-        saveCopyOfTheBook(copy);
+        save(copy);
     }
 
-    public CopyOfTheBook changeStatus(Long copyOfTheBookId, Status status) {
-        CopyOfTheBook copy = findCopyOfTheBookById(copyOfTheBookId);
-        copy.setStatus(status.toString());
-        saveCopyOfTheBook(copy);
+    public BookCopy changeStatus(Long copyOfTheBookId, String status) {
+        BookCopy copy = findById(copyOfTheBookId);
+        copy.setStatus(status);
+        save(copy);
         return copy;
     }
 }

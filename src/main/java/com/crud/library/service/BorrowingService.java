@@ -1,28 +1,27 @@
 package com.crud.library.service;
 
-import com.crud.library.Exception.BorredBookNotFoundException;
+import com.crud.library.Exception.BorrowedBookNotFoundException;
 import com.crud.library.Exception.CopyNotFoundException;
+import com.crud.library.domain.BookCopy;
 import com.crud.library.domain.BorrowedBook;
-import com.crud.library.domain.CopyOfTheBook;
 import com.crud.library.domain.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 @Service
-@Transactional
 public class BorrowingService {
-
-    private BookService bookService;
-    private BorrowedBookService borrowedBookService;
-    private CopyService copyService;
-    private ReaderService readerService;
+    private final BookService bookService;
+    private final BorrowedBookService borrowedBookService;
+    private final CopyService copyService;
+    private final ReaderService readerService;
 
     @Autowired
-    public BorrowingService(BookService bookService, BorrowedBookService borrowedBookService,
-                            CopyService copyService, ReaderService readerService) {
+    public BorrowingService(BookService bookService,
+                            BorrowedBookService borrowedBookService,
+                            CopyService copyService,
+                            ReaderService readerService) {
         this.bookService = bookService;
         this.borrowedBookService = borrowedBookService;
         this.copyService = copyService;
@@ -30,22 +29,22 @@ public class BorrowingService {
     }
 
     public void borrowBook(Long bookId, Long readerId) throws CopyNotFoundException {
-        CopyOfTheBook copyToBorrow = bookService.findBookById(bookId)
+        BookCopy copyToBorrow = bookService.findById(bookId)
                 .getCopiesBookInLibrary().stream()
-                .filter(copy -> !copy.getBorrowed())
+                .filter(copy -> !copy.isBorrowed())
                 .filter(status -> status.getStatus().equals(Status.GOOD.toString()))
                 .findFirst().orElseThrow(CopyNotFoundException::new);
         copyToBorrow.setBorrowed(true);
-        borrowedBookService.saveBorrowedBook(new BorrowedBook(copyToBorrow, readerService.findReaderById(readerId), LocalDate.now()));
+        borrowedBookService.save(new BorrowedBook(copyToBorrow, readerService.findById(readerId), LocalDate.now()));
     }
 
-    public void returnBook(Long copyId) throws BorredBookNotFoundException {
-        CopyOfTheBook copyToReturn = copyService.findCopyOfTheBookById(copyId);
-        BorrowedBook borrowedBook = borrowedBookService.getBorrowedBooks().stream()
-                .filter(borrowedBook1 -> borrowedBook1.getCopyOfTheBook().getId() == copyId)
-                .findFirst().orElseThrow(BorredBookNotFoundException::new);
+    public void returnBook(Long copyId) throws BorrowedBookNotFoundException {
+        BookCopy copyToReturn = copyService.findById(copyId);
+        BorrowedBook borrowedBook = borrowedBookService.findAll().stream()
+                .filter(book -> book.getCopyOfTheBook().getId().equals(copyId))
+                .findFirst().orElseThrow(BorrowedBookNotFoundException::new);
         copyToReturn.setBorrowed(false);
         borrowedBook.setReturnDate(LocalDate.now());
-        borrowedBookService.saveBorrowedBook(borrowedBook);
+        borrowedBookService.save(borrowedBook);
     }
 }

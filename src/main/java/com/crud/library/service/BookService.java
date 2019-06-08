@@ -10,19 +10,18 @@ import java.util.List;
 
 @Service
 public class BookService {
-
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
     @Autowired
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
-    public void saveBook(Book book) {
+    public void save(Book book) {
         bookRepository.save(book);
     }
 
-    public void deleteBookById(Long bookId) {
+    public void deleteById(Long bookId) {
         bookRepository.deleteById(bookId);
     }
 
@@ -30,7 +29,7 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public Book findBookById(long bookId) throws BookNotFoundException {
+    public Book findById(long bookId) throws BookNotFoundException {
         return bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
     }
 }

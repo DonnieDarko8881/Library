@@ -12,30 +12,31 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/library")
 public class BorrowingController {
-    private BorrowingService borrowingService;
-    private BorrowedBookMapper borrowedBookMapper;
-    private BorrowedBookService borrowedBookService;
+    private final BorrowingService borrowingService;
+    private final BorrowedBookMapper borrowedBookMapper;
+    private final BorrowedBookService borrowedBookService;
 
     @Autowired
-    public BorrowingController(BorrowingService borrowingService, BorrowedBookMapper borrowedBookMapper,
+    public BorrowingController(BorrowingService borrowingService,
+                               BorrowedBookMapper borrowedBookMapper,
                                BorrowedBookService borrowedBookService) {
         this.borrowingService = borrowingService;
         this.borrowedBookMapper = borrowedBookMapper;
         this.borrowedBookService = borrowedBookService;
     }
 
-    @GetMapping(value = "getBorrowedBooks")
-    public List<BorrowedBookDto> getBorrowedBooks(){
-       return borrowedBookMapper.mapToBorrowedBookDtoList(borrowedBookService.getBorrowedBooks());
+    @GetMapping(value = "/borrowedBooks")
+    public List<BorrowedBookDto> getBorrowedBooks() {
+        return borrowedBookMapper.mapToBorrowedBookDtoList(borrowedBookService.findAll());
     }
 
-    @PostMapping(value = "borrowBook")
-    public void borrowBook(@RequestParam("bookId") Long bookId, @RequestParam("readerId") Long readerId) {
+    @PostMapping(value = "/borrowBook/books/{bookId}/readers/{readerId}")
+    public void borrowBook(@PathVariable Long bookId, @PathVariable Long readerId) {
         borrowingService.borrowBook(bookId, readerId);
     }
 
-    @PutMapping(value = "returnBook")
-    public void returnBook(@RequestParam("copyId")Long copyId){
+    @PutMapping(value = "/returnBook/copies/{copyId}")
+    public void returnBook(@PathVariable Long copyId) {
         borrowingService.returnBook(copyId);
     }
 }
